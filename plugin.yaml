@@ -1,0 +1,88 @@
+######################################################################################
+# DigitalOcean plugin
+######################################################################################
+
+plugins:
+  digitalocean:
+    executor: central_deployment_agent
+    source: https://github.com/cloudify-cosmo/cloudify-digitalocean-plugin/archive/master.zip
+
+
+node_types:
+  cloudify.digitalocean.nodes.Droplet:
+    derived_from: cloudify.nodes.Compute
+    properties:
+      use_external_resource:
+        description: >
+          Indicates whether the resource exists of if Cloudify should create the resource.
+        type: boolean
+        default: false
+      droplet_id:
+        description: >
+          Whether external or created by the manager, Droplets will be associated with an ID
+          assigned by DigitalOcean.
+        type: interger
+        default: -1
+      droplet_name:
+        description: >
+          A label for the droplet. Must be [a-zA-Z0-9\-]*.
+        type: string
+        default: 'Cloudify-Droplet'
+      slug_size:
+        description: >
+          Multiplier by which Droplets are sized. Corresponds exactly to the amount of RAM provisioned, but also
+          scales the amount of SSD, CPU, and data transfer provisioned, and cost.
+          Possible values at the moment are 512mb, 1gb, 2gb, 4gb, 8gb, 16gb, 32gb, 48gb, 64gb.
+          An API call exists to retrieve all of these values.
+        type: string
+        default: 512mb
+      # ip is inherited from cloudify.nodes.Compute
+      #   All Droplets are associated to a publicly avail IPv4 address.
+      # install_agent (boolean) is inherited from Compute
+      # cloudify_agent {} is inherited from Compute
+      region_slug:
+        description: >
+          A magic number for the region Region in which Droplet will be provisioned. Note, the magic string for these regions is not documented
+          in the DigitalOcean API.
+          Note that not all images are supported in all regions. Some testing is required to guess the magic number: 'nyc3' works fine, but 'nyc1'
+          does not, for example for ubuntu 14.04 x64 at time of this writing. (There is an api call available, too.)
+          The following are listed in parts of the doc: [nyc1, ams1, sfo1, nyc2, ams2, sgp1, lon1, nyc3, ams3, nyc3].
+          The API supports region information and can be queried for this information.
+        type: string
+        default: nyc3
+      private_network_enablement:
+        type: boolean
+        default: false
+      ipv6_enablement:
+        type: boolean
+        default: false
+      backup_enablement:
+        type: boolean
+        default: false
+      image_slug:
+        description: >
+          A magic number for the type of distribution image. Note that all regions do not support all images.
+        type: string
+        default: ubuntu-14-04-x64
+      ssh_keys:
+        description: >
+          A list of ssh key locations, used for authentication.
+        type: string
+        default: []
+      hostname:
+        description: >
+          An optional hostname.
+        type: string
+        default: ''
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create: digitalocean_plugin.create
+        start: digitalocean_plugin.start
+        stop: digitalocean_plugin.stop
+
+    # TODO
+    cloudify.digitalocean.nodes.Snapshot:
+      derived_from: cloudify.nodes.Compute
+    # TODO
+    cloudify.digitalocean.nodes.Backup:
+      derived_from: cloudify.nodes.Compute
