@@ -87,13 +87,11 @@ def start(droplet_id=None, **_):
         start_droplet(create())
     else:
         ctx.logger.info("Starting existing droplet. Droplet id = '{0}'.".format(droplet_id))
-        d = get_droplet(droplet_id, ctx=ctx)
+        d = get_droplet(droplet_id)
         if d is not None:
             start_droplet(d)
         else:
-            msg = droplet_does_not_exist_for_operation("start", droplet_id)
-            ctx.logger.debug(msg)
-            raise NonRecoverableError(msg)
+            raise NonRecoverableError(droplet_does_not_exist_for_operation("start", droplet_id))
     # TODO need to check back later to see that the start operation has failed or succeeded or is still processing
     pass
 
@@ -105,11 +103,9 @@ def stop(droplet_id, **_):
     :param droplet_id:
     :return: None
     """
-    d = get_droplet(droplet_id, ctx=ctx)
+    d = get_droplet(droplet_id)
     if d is None:
-        msg = droplet_does_not_exist_for_operation("stop", droplet_id)
-        ctx.logger.debug(msg)
-        raise NonRecoverableError(msg)
+        raise NonRecoverableError(droplet_does_not_exist_for_operation("stop", droplet_id))
     else:
         ctx.logger.info("Stopping droplet with droplet id = '{0}'.".format(droplet_id))
         d.destroy()

@@ -15,7 +15,6 @@
 
 import os
 
-from cloudify import ctx
 from cloudify.exceptions import NonRecoverableError
 
 
@@ -29,9 +28,7 @@ def load_token(**_):
     cwd = os.path.dirname(__file__)
     token_path = os.path.join(cwd, 'token.txt')
     if not os.path.isfile(token_path):
-        msg = 'Missing security token file "%s".' % token_path
-        ctx.logger.debug(msg)
-        raise NonRecoverableError(msg)
+        raise NonRecoverableError('Missing security token file "%s".' % token_path)
     with open(token_path, 'r') as f:
         return f.read()
 

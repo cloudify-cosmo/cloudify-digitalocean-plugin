@@ -17,7 +17,6 @@
 import digitalocean as ocean
 
 from cloudify.exceptions import NonRecoverableError
-from cloudify import ctx
 
 from security import load_token
 
@@ -52,7 +51,7 @@ def available_slug_sizes():
     return sizes
 
 
-def get_droplet(droplet_id, **_):
+def get_droplet(droplet_id):
     """ XXX
     searches all droplets for the one with the given droplet_id
     :param droplet_id: the one we're looking for
@@ -67,9 +66,7 @@ def get_droplet(droplet_id, **_):
         droplets = filter(has_id, ocean.Manager(token=load_token()).get_all_droplets())
         sz = len(droplets)
         if sz > 1:
-            msg = droplet_does_not_exist_for_operation("get_droplet", droplet_id)
-            ctx.logger.debug(msg)
-            raise NonRecoverableError(msg)
+            raise NonRecoverableError(droplet_does_not_exist_for_operation("get_droplet", droplet_id))
         elif sz == 1:
             return droplets[0]
         else:
