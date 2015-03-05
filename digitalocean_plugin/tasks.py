@@ -18,7 +18,12 @@ from cloudify.decorators import operation
 from cloudify.exceptions import NonRecoverableError
 
 from security import load_token
-from utils import available_images, available_regions, available_slug_sizes, get_droplet, droplet_does_not_exist_for_operation
+from utils import (
+    available_images,
+    available_regions,
+    available_slug_sizes,
+    get_droplet,
+    droplet_does_not_exist_for_operation)
 
 
 def generate_droplet_name():
@@ -82,7 +87,7 @@ def start(droplet_id=None, **_):
         start_droplet(create())
     else:
         ctx.logger.info("Starting existing droplet. Droplet id = '{0}'.".format(droplet_id))
-        d = get_droplet(droplet_id, **_)
+        d = get_droplet(droplet_id, ctx=ctx)
         if d is not None:
             start_droplet(d)
         else:
@@ -100,7 +105,7 @@ def stop(droplet_id, **_):
     :param droplet_id:
     :return: None
     """
-    d = get_droplet(droplet_id, **_)
+    d = get_droplet(droplet_id, ctx=ctx)
     if d is None:
         msg = droplet_does_not_exist_for_operation("stop", droplet_id)
         ctx.logger.debug(msg)

@@ -34,3 +34,4 @@ def load_token(**_):
         raise NonRecoverableError(msg)
     with open(token_path, 'r') as f:
         return f.read()
+
