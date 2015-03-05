@@ -74,7 +74,7 @@ def generate_droplet_name():
 
 
 @operation
-def create(droplet_name=None, region=None, image=None, size_slug='512mb', backups=False):
+def create(droplet_name=None, region=None, image=None, size_slug='512mb', backups=False, **_):
     """ XXX
     Tell the API to create a droplet. Note that not all combinations of options are possible
     :param droplet_name: formal name
@@ -145,7 +145,7 @@ def droplet_does_not_exist_for_operation(op, droplet_id):
 
 
 @operation
-def start(droplet_id=None):
+def start(droplet_id=None, **_):
     """ XXX
     Starts a new Droplet, if it exists, otherwise creates a new one and starts it. does not check back for success.
     :param droplet_id:
@@ -173,7 +173,7 @@ def start(droplet_id=None):
 
 
 @operation
-def stop(droplet_id):
+def stop(droplet_id, **_):
     """ XXX
     Asks the API to destroy a droplet, if it exists. Does not check back for success.
     :param droplet_id:
