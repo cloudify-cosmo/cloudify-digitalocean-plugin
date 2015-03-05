@@ -97,9 +97,9 @@ def create(droplet_name=None, region=None, image=None, size_slug='512mb', backup
     else:
         _name = generate_droplet_name()
 
-    _image = first_unless_none(image, available_images())
-    _region = first_unless_none(region, available_regions())
-    _size_slug = first_unless_none(size_slug, available_slug_sizes())  # works even if user passes None
+    _image = first_unless_none(image, available_images)
+    _region = first_unless_none(region, available_regions)
+    _size_slug = first_unless_none(size_slug, available_slug_sizes)  # works even if user passes None
 
     ctx.logger.debug("Computed values for name = '{0}', image = '{1}', region = '{2}', size_slug = '{3}.'".format(_name, _image, _region, _size_slug))
 
