@@ -111,3 +111,4 @@ def stop(droplet_id, **_):
         d.destroy()
     # TODO need to check back later to see that the start operation has failed or succeeded or is still processing
     pass
+
