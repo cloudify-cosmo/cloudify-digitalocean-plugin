@@ -44,11 +44,12 @@ class TestSecurity(testtools.TestCase):
 
         ctx = self.mock_ctx("test_add_pubkey_to_digitalocean_account")
 
-        oops = self.assertRaise(NonRecoverableError,
-                                self.test_instance
-                                .add_pubkey_to_digitalocean_account(
-                                    self.test_keypair_alias, self.badkey_path,
-                                    ctx=ctx))
+        oops = self.assertRaises(NonRecoverableError,
+                                 self.test_instance.
+                                 add_pubkey_to_digitalocean_account(
+                                     self.test_keypair_alias,
+                                     self.badkey_path,
+                                     ctx=ctx))
         self.assertIn("Unknown public key file '{0}'".format(self.badkey_path),
                       oops.message)
 
