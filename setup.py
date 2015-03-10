@@ -34,10 +34,14 @@ setup(
     zip_safe=False,
     install_requires=[
         "cloudify-plugins-common>=3.2a5",
-        "python-digitalocean==1.4.1"
+        "python-digitalocean==1.4.1",
+        "requests==2.5.3"
     ],
     test_requires=[
-        "cloudify-dsl-parser",
-        "nose"
+        "testtools",
+        "testfixtures",
+        "nose",
+        "nose-cov",
+        "cloudify-dsl-parser"
     ]
 )
