@@ -42,7 +42,15 @@ class DigitalOceanSecurity(object):
             'Authorization': "Bearer %s" % self.digitalocean_security_token
         }
 
-    def delete_pubkey_from_digitalocean_account(self, fingerprint, **_):
+    def delete_pubkey_from_account_by_fingerprint(self, fingerprint, **_):
+        pass
+
+    def delete_pubkey_from_account_by_keyid(self, keyid, **_):
+        """
+        :param keyid: id assigned to key (when imported) by digital ocean
+        :param _: varargs
+        :return: True always
+        """
         pass
 
     def add_pubkey_to_digitalocean_account(self, pubkey_file, key_name, **_):
@@ -74,7 +82,14 @@ class DigitalOceanSecurity(object):
         try:
             # because it's a POST, it should be only 1 response
             # if we were to call GET, it would return all associated keys
-            r = requests.post(url, headers=h, data=payload).json()['ssh_key']
+            response = requests.post(url, headers=h, data=payload)
+            code = response.status_code
+            if code < 200 or code > 299:
+                raise NonRecoverableError(
+                    "Error on server for %(URL)s. Status code = '%(CODE)d'."
+                    % {'URL': url, 'CODE': code}
+                )
+            r = response.json()['ssh_key']
 
         except (KeyError, ValueError):
             raise NonRecoverableError(
