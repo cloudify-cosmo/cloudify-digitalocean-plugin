@@ -14,32 +14,89 @@
 # limitations under the License.
 
 import os
+import random
+
+import requests
 
 from cloudify.exceptions import NonRecoverableError
 
 
 class DigitalOceanSecurity(object):
 
+    pubkey_stub = "Cloudify Key {0}"
+    api_endpoint = 'https://api.digitalocean.com/v2/'
+    token_file_name = 'token.txt'
+    key_count_limit = 1024
+
     def __init__(self):
         self.digitalocean_security_token \
             = self.load_digitalocean_account_token()
-        self.api_endpoint = "https://api.digitalocean.com/v2/"
+        self.rand = random
+
+    def build_url(self, end_of_url):
+        return "%s%s" % (self.api_endpoint, end_of_url.replace("//", "/"))
+
+    def common_headers(self):
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': "Bearer %s" % self.digitalocean_security_token
+        }
 
     def delete_pubkey_from_digitalocean_account(self, fingerprint, **_):
         pass
 
-    def add_pubkey_to_digitalocean_account(self, alias, pubkey_file, **_):
-        fingerprint = '43:51:43:a1:b5:fc:8b:b7:0a:3a:a9:b1:0f:66:73:a8'
-        print self
+    def add_pubkey_to_digitalocean_account(self, pubkey_file, key_name, **_):
+        """
+        Uploads a public key file to the DigitalOcean account.
+        :param pubkey_file: full path to a public key file
+        :param name: an optional name for your key - will be assigned randomly
+         if not provided
+        :param _:
+        :return: The id and fingerprint of the uploaded key, returned as a
+        tuple (id, fingerprint)
+        """
         if not os.path.isfile(pubkey_file):
-            raise NonRecoverableError("Unknown public key file '{0}'."
+            raise NonRecoverableError("Unknown public key file: '{0}'."
                                       .format(pubkey_file))
+        with open(pubkey_file, 'r') as f:
+            pubkey = f.read()
+        key_name = self.make_key_name(key_name)
+        assert pubkey, "A non-empty public key file must be provided."
 
-        return fingerprint
+        payload = {
+            "name": key_name,
+            "public_key": pubkey
+        }
+
+        url = self.build_url('account/keys')
+        h = self.common_headers()
+
+        try:
+            # because it's a POST, it should be only 1 response
+            # if we were to call GET, it would return all associated keys
+            r = requests.post(url, headers=h, data=payload).json()['ssh_key']
+
+        except (KeyError, ValueError):
+            raise NonRecoverableError(
+                "Error adding public ssh key to DigitalOcean account.")
+
+        return r['id'], r['fingerprint']
+
+    def make_key_name(self, proposed_name):
+        """
+        :param proposed_name: a name to test for emptiness
+        :return: proposed_name, stripped (if non-empty), else a
+        randomly-generated name
+        """
+        if proposed_name:
+            return proposed_name.strip()
+        r = self.rand.randint(0, self.key_count_limit + 1)
+        return self.pubkey_stub.format(r)
 
     def cache_pubkey_copy_from_digitalocean_account(self,
                                                     fingerprint, **_):
-        pass
+
+        raise NonRecoverableError("Not implemented yet.")
 
     def load_digitalocean_account_token(self, **_):
         """
@@ -51,9 +108,8 @@ class DigitalOceanSecurity(object):
         """
         def cwd():
             return os.path.dirname(__file__)
-        print self
 
-        token_path = os.path.join(cwd(), 'token.txt')
+        token_path = os.path.join(cwd(), self.token_file_name)
         if not os.path.isfile(token_path):
             raise NonRecoverableError('Missing security token file "%s".'
                                       % token_path)
