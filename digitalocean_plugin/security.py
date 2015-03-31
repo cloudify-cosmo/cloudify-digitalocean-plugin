@@ -30,13 +30,13 @@ class DigitalOceanSecurity(object):
 
     def __init__(self):
         self.digitalocean_security_token \
-            = self.load_digitalocean_account_token()
+            = self._load_digitalocean_account_token()
         self.rand = random
 
-    def build_url(self, end_of_url):
+    def _build_url(self, end_of_url):
         return "%s%s" % (self.api_endpoint, end_of_url.replace("//", "/"))
 
-    def common_headers(self):
+    def _common_headers(self):
         return {
             'Content-Type': 'application/json',
             'Authorization': "Bearer %s" % self.digitalocean_security_token
@@ -48,7 +48,20 @@ class DigitalOceanSecurity(object):
         :param _: varargs
         :return: True upon success
         """
-        raise NonRecoverableError("not implemented")
+        self._destroy_key(fingerprint)
+        return True
+
+    def _destroy_key(self, identifier):
+        url = self._build_url("account/keys/%s" % identifier)
+        h = self._common_headers()
+        response = requests.delete(url, headers=h)
+        code = response.status_code
+        if code != 204:
+            raise NonRecoverableError(
+                "Error on server. Expected status code = '204'"
+                ", but received '%s' instead." % str(code)
+            )
+        return
 
     def delete_pubkey_from_account_by_keyid(self, keyid, **_):
         """
@@ -56,7 +69,8 @@ class DigitalOceanSecurity(object):
         :param _: varargs
         :return: True upon success
         """
-        raise NonRecoverableError("not implemented")
+        self._destroy_key(keyid)
+        return True
 
     def add_pubkey_to_digitalocean_account(self, pubkey_file, key_name, **_):
         """
@@ -73,7 +87,7 @@ class DigitalOceanSecurity(object):
                                       .format(pubkey_file))
         with open(pubkey_file, 'r') as f:
             pubkey = f.read()
-        key_name = self.make_key_name(key_name)
+        key_name = self._make_key_name(key_name)
         assert pubkey, "A non-empty public key file must be provided."
 
         payload = {
@@ -81,8 +95,8 @@ class DigitalOceanSecurity(object):
             "public_key": pubkey
         }
 
-        url = self.build_url('account/keys')
-        h = self.common_headers()
+        url = self._build_url('account/keys')
+        h = self._common_headers()
 
         # try:
         # because it's a POST, it should be only 1 response
@@ -99,7 +113,7 @@ class DigitalOceanSecurity(object):
         r = response.json()['ssh_key']
         return r['id'], r['fingerprint']
 
-    def make_key_name(self, proposed_name):
+    def _make_key_name(self, proposed_name):
         """
         :param proposed_name: a name to test for emptiness
         :return: proposed_name, stripped (if non-empty), else a
@@ -115,7 +129,7 @@ class DigitalOceanSecurity(object):
 
         raise NonRecoverableError("Not implemented yet.")
 
-    def load_digitalocean_account_token(self, **_):
+    def _load_digitalocean_account_token(self, **_):
         """
         This will load a security token from a local file called token.txt. A
         token can be obtained from DigitalOcean by Registering a New

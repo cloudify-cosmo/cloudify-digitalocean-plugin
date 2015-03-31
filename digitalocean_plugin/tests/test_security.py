@@ -136,19 +136,19 @@ class TestSecurity(testtools.TestCase):
     def test_make_key_name(self):
 
         test_input = "a key name"
-        self.assertEqual(self.test_instance.make_key_name(test_input),
+        self.assertEqual(self.test_instance._make_key_name(test_input),
                          test_input)
 
         strip_me = " key "
-        actual = self.test_instance.make_key_name(strip_me)
+        actual = self.test_instance._make_key_name(strip_me)
         self.assertEqual(actual, strip_me.strip())
 
-        actual0 = self.test_instance.make_key_name(None)
+        actual0 = self.test_instance._make_key_name(None)
         self.assertEqual(actual0 is None, False,
                          "Generated key name should be non-None.")
 
-        actual1 = self.test_instance.make_key_name(None)
-        actual2 = self.test_instance.make_key_name(None)
+        actual1 = self.test_instance._make_key_name(None)
+        actual2 = self.test_instance._make_key_name(None)
 
         self.assertEqual(actual1 == actual2, False,
                          "Generated key names should be different.")
@@ -157,21 +157,21 @@ class TestSecurity(testtools.TestCase):
 
         hi_mom = 'hi/mom'
 
-        act = self.test_instance.build_url(hi_mom)
+        act = self.test_instance._build_url(hi_mom)
         self.assertEqual(True, act.endswith(hi_mom))
         self.assertEqual(act, "https://api.digitalocean.com/v2/hi/mom")
 
-        act = self.test_instance.build_url("/%s" % hi_mom)
+        act = self.test_instance._build_url("/%s" % hi_mom)
         self.assertEqual(True, act.endswith(hi_mom))
         self.assertEqual(False, act.startswith("/"))
 
-        act = self.test_instance.build_url("/////%s" % hi_mom)
+        act = self.test_instance._build_url("/////%s" % hi_mom)
         self.assertEqual(True, act.endswith(hi_mom))
         self.assertEqual(False, act.startswith("/"))
 
     def test_common_headers(self):
 
-        act = self.test_instance.common_headers()
+        act = self.test_instance._common_headers()
 
         self.assertEqual(
             'application/json',
@@ -225,7 +225,7 @@ class TestSecurity(testtools.TestCase):
         )
 
         self.assertIn("Error on server", oops.message)
-        self.assertIn("Expected status code = '204'.", oops.message)
+        self.assertIn("Expected status code = '204'", oops.message)
         self.assertIn(str(test_status), oops.message)
 
     @staticmethod
@@ -260,7 +260,7 @@ class TestSecurity(testtools.TestCase):
         responses.add(
             responses.DELETE,
             self.make_url("account/keys/%s" % test_fingerprint),
-            status=204
+            status=error_code
         )
 
         oops = self.assertRaises(
@@ -270,5 +270,5 @@ class TestSecurity(testtools.TestCase):
         )
 
         self.assertIn("Error on server", oops.message)
-        self.assertIn("Expected status code = '204'.", oops.message)
+        self.assertIn("Expected status code = '204'", oops.message)
         self.assertIn(str(error_code), oops.message)

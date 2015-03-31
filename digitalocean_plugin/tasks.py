@@ -70,7 +70,7 @@ def create(security, droplet_name=None, region=None, image=None,
                      "region = '{2}', size_slug = '{3}.'"
                      .format(_name, _image, _region, _size_slug))
 
-    d = ocean.Droplet(security.load_digitalocean_account_token(), name=_name,
+    d = ocean.Droplet(security._load_digitalocean_account_token(), name=_name,
                       image=_image, region=_region, size_slug=_size_slug,
                       backups=backups)
     d.create()
