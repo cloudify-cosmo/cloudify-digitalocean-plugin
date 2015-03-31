@@ -65,15 +65,23 @@ def create(security, droplet_name=None, region=None, image=None,
     _image = first_unless_none(image, available_images)
     _region = first_unless_none(region, available_regions)
     _size_slug = first_unless_none(size_slug, available_slug_sizes)
+    token = security._load_digitalocean_account_token()
 
-    ctx.logger.debug("Computed values for name = '{0}', image = '{1}', "
-                     "region = '{2}', size_slug = '{3}.'"
-                     .format(_name, _image, _region, _size_slug))
+    ctx.logger.debug(
+        "Computed values for name = '{0}', image = '{1}', region = '{2}', "
+        "size_slug = '{3}.'".format(_name, _image, _region, _size_slug)
+    )
 
-    d = ocean.Droplet(security._load_digitalocean_account_token(), name=_name,
-                      image=_image, region=_region, size_slug=_size_slug,
-                      backups=backups)
+    d = ocean.Droplet(
+        token,
+        name=_name,
+        image=_image,
+        region=_region,
+        size_slug=_size_slug,
+        backups=backups
+    )
     d.create()
+
     # TODO need to check back later to see that the start operation has failed
     # or succeeded or is still processing
     pass
