@@ -67,7 +67,13 @@ class TestSecurity(testtools.TestCase):
 
     @responses.activate
     def test_add_pubkey_to_digitalocean_account(self):
-
+        """
+        Tests that:
+            + bad input results in a NonRecoverableError
+            + good input is processed correctly
+            + DigitalOcean service reponses are returned
+              to the caller as a tuple of (key_id, key_fingerprint)
+        """
         ctx = self.mock_ctx('test_add_pubkey_to_digitalocean_account')
 
         # raising when garbage input is provided
@@ -110,11 +116,10 @@ class TestSecurity(testtools.TestCase):
 
     @responses.activate
     def test_add_pubkey_to_digitalocean_account_needs_2xx(self):
-
-        # ctx = self.mock_ctx(
-        #     'test_add_pubkey_to_digitalocean_account_needs_2xx'
-        # )
-
+        """
+        a NonRecoverableError should be raised if the DigitalOcean server
+        returns a non-200 response code
+        """
         error_code = 505
 
         responses.add(
@@ -139,7 +144,9 @@ class TestSecurity(testtools.TestCase):
         self.assertIn(str(error_code), msg)
 
     def test_make_key_name(self):
-
+        """
+            Tests that a helper method works as expected.
+        """
         test_input = "a key name"
         self.assertEqual(self.test_instance._make_key_name(test_input),
                          test_input)
@@ -159,7 +166,11 @@ class TestSecurity(testtools.TestCase):
                          "Generated key names should be different.")
 
     def test_build_url(self):
-
+        """
+            Tests that:
+                + consecutive forward slashes are dealt with correctly
+                + urls are constructed from input as expected
+        """
         hi_mom = 'hi/mom'
 
         act = self.test_instance._build_url(hi_mom)
@@ -179,7 +190,9 @@ class TestSecurity(testtools.TestCase):
         self.assertEqual("https://api.digitalocean.com/v2/hi/mommy/", act)
 
     def test_common_headers(self):
-
+        """
+            Tests that a helper method works as expected.
+        """
         act = self.test_instance._common_headers()
 
         self.assertEqual(
@@ -200,7 +213,11 @@ class TestSecurity(testtools.TestCase):
 
     @responses.activate
     def test_delete_pubkey_from_account_by_keyid(self):
-
+        """
+            Tests that:
+                + test_id makes it into to the request url
+                + method returns true, when a 204 is returned
+        """
         test_id = self.random_test_id()
 
         responses.add(
@@ -216,7 +233,11 @@ class TestSecurity(testtools.TestCase):
 
     @responses.activate
     def test_delete_pubkey_from_account_by_keyid_needs_204(self):
-
+        """
+            Tests that:
+                + a non-204 response code from the server
+                  results in a NonRecoverableError
+        """
         test_id = self.random_test_id()
         test_status = 200
 
@@ -243,7 +264,11 @@ class TestSecurity(testtools.TestCase):
 
     @responses.activate
     def test_delete_pubkey_from_account_by_fingerprint(self):
-
+        """
+            Tests that:
+                + test_fingerprint makes it into to the request url
+                + method returns true, when a 204 is returned
+        """
         test_fingerprint = self.random_fingerprint()
 
         responses.add(
@@ -262,7 +287,11 @@ class TestSecurity(testtools.TestCase):
 
     @responses.activate
     def test_delete_pubkey_from_account_by_fingerprint_needs_204(self):
-
+        """
+            Tests that:
+                + a non-204 response code from the server
+                  results in a NonRecoverableError
+        """
         error_code = 200
         test_fingerprint = self.random_fingerprint()
 
