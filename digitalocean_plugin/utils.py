@@ -14,9 +14,6 @@
 # limitations under the License.
 
 
-# Third party Imports
-import digitalocean as ocean
-
 # Cloudify Imports
 from cloudify.exceptions import NonRecoverableError
 
@@ -68,20 +65,7 @@ def get_droplet(droplet_id):
 
     if droplet_id is None:
         raise NonRecoverableError("droplet_id is required.")
-    else:
-        droplets = None
-        raise NonRecoverableError("Fix me")
-            # droplets= filter(has_id, ocean.Manager(
-            # token=load_digitalocean_account_token()).get_all_droplets())
-        sz = len(droplets)
-        if sz > 1:
-            raise NonRecoverableError(
-                droplet_does_not_exist_for_operation("get_droplet",
-                                                     droplet_id))
-        elif sz == 1:
-            return droplets[0]
-        else:
-            return None
+    raise NonRecoverableError("implement me")
 
 
 def droplet_does_not_exist_for_operation(op, droplet_id):

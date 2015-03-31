@@ -33,15 +33,8 @@ setup(
     license='LICENSE',
     zip_safe=False,
     install_requires=[
-        "cloudify-plugins-common>=3.2a5",
+        "cloudify-plugins-common>=3.2a7",
         "python-digitalocean==1.4.1",
         "requests==2.5.3"
-    ],
-    test_requires=[
-        "testtools",
-        "testfixtures",
-        "nose",
-        "nose-cov",
-        "cloudify-dsl-parser"
     ]
 )

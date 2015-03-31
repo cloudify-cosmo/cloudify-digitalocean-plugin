@@ -39,7 +39,10 @@ class DigitalOceanSecurity(object):
     def _build_url(self, end_of_url):
         if end_of_url.startswith("/"):
             end_of_url = end_of_url[1:]
-        return "{0}{1}".format(self.api_endpoint, end_of_url.replace("//", "/"))
+        return "{0}{1}".format(
+            self.api_endpoint,
+            end_of_url.replace("//", "/")
+        )
 
     def _common_headers(self):
         return {
