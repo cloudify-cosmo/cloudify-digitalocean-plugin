@@ -14,11 +14,13 @@
 # limitations under the License.
 
 
+# Third party Imports
 import digitalocean as ocean
 
+# Cloudify Imports
 from cloudify.exceptions import NonRecoverableError
 
-from security import load_digitalocean_account_token
+# from security import _load_digitalocean_account_token
 
 
 def available_images():
@@ -67,8 +69,10 @@ def get_droplet(droplet_id):
     if droplet_id is None:
         raise NonRecoverableError("droplet_id is required.")
     else:
-        droplets = filter(has_id, ocean.Manager(
-            token=load_digitalocean_account_token()).get_all_droplets())
+        droplets = None
+        raise NonRecoverableError("Fix me")
+            # droplets= filter(has_id, ocean.Manager(
+            # token=load_digitalocean_account_token()).get_all_droplets())
         sz = len(droplets)
         if sz > 1:
             raise NonRecoverableError(

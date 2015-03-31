@@ -12,11 +12,16 @@
 #    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    * See the License for the specific language governing permissions and
 #    * limitations under the License.
+
+# Built-in imports
 import os
-import testtools
 import random
+
+# Third party imports
+import testtools
 import responses
 
+# Cloudify imports
 from cloudify.mocks import MockCloudifyContext
 from cloudify.exceptions import NonRecoverableError
 

@@ -13,11 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Built-in imports
 import os
 import random
 
+# Third party imports
 import requests
 
+# Cloudify imports
 from cloudify.exceptions import NonRecoverableError
 
 
