@@ -126,11 +126,11 @@ class DigitalOceanSecurity(object):
         r = self.rand.randint(0, self.key_count_limit + 1)
         return self.pubkey_stub.format(r)
 
-    def cache_pubkey_copy_from_digitalocean_account(self,
-                                                    fingerprint, **_):
-
-        raise NonRecoverableError("Not implemented yet.")
-
+    # def cache_pubkey_copy_from_digitalocean_account(self,
+    #                                                 fingerprint, **_):
+    #
+    #     raise NonRecoverableError("Not implemented yet.")
+    #
     def _load_digitalocean_account_token(self, **_):
         """
         This will load a security token from a local file called token.txt. A
@@ -144,7 +144,8 @@ class DigitalOceanSecurity(object):
 
         token_path = os.path.join(cwd(), self.token_file_name)
         if not os.path.isfile(token_path):
-            raise NonRecoverableError('Missing security token file "%s".'
-                                      % token_path)
+            raise NonRecoverableError(
+                'Missing security token file "%s".' % token_path
+            )
         with open(token_path, 'r') as f:
             return f.read()
