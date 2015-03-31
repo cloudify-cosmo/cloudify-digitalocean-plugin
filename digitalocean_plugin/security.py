@@ -43,13 +43,18 @@ class DigitalOceanSecurity(object):
         }
 
     def delete_pubkey_from_account_by_fingerprint(self, fingerprint, **_):
+        """
+        :param fingerprint: key fingerprint
+        :param _: varargs
+        :return: True upon success
+        """
         raise NonRecoverableError("not implemented")
 
     def delete_pubkey_from_account_by_keyid(self, keyid, **_):
         """
         :param keyid: id assigned to key (when imported) by digital ocean
         :param _: varargs
-        :return: True always
+        :return: True upon success
         """
         raise NonRecoverableError("not implemented")
 
