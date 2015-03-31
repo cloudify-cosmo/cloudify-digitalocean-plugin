@@ -34,6 +34,8 @@ class DigitalOceanSecurity(object):
         self.rand = random
 
     def _build_url(self, end_of_url):
+        if end_of_url.startswith("/"):
+            end_of_url = end_of_url[1:]
         return "%s%s" % (self.api_endpoint, end_of_url.replace("//", "/"))
 
     def _common_headers(self):

@@ -169,6 +169,10 @@ class TestSecurity(testtools.TestCase):
         self.assertEqual(True, act.endswith(hi_mom))
         self.assertEqual(False, act.startswith("/"))
 
+        hi_mom = "/hi/mommy/"
+        act = self.test_instance._build_url(hi_mom)
+        self.assertEqual("https://api.digitalocean.com/v2/hi/mommy/", act)
+
     def test_common_headers(self):
 
         act = self.test_instance._common_headers()
