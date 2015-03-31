@@ -106,9 +106,9 @@ class TestSecurity(testtools.TestCase):
     @responses.activate
     def test_add_pubkey_to_digitalocean_account_needs_2xx(self):
 
-        ctx = self.mock_ctx(
-            'test_add_pubkey_to_digitalocean_account_needs_2xx'
-        )
+        # ctx = self.mock_ctx(
+        #     'test_add_pubkey_to_digitalocean_account_needs_2xx'
+        # )
 
         error_code = 505
 
@@ -118,17 +118,20 @@ class TestSecurity(testtools.TestCase):
             status=error_code
         )
 
+        pubkey_path = os.path.join(os.path.dirname(__file__),
+                                   self.test_pubkey_filename)
+
         oops = self.assertRaises(
             NonRecoverableError,
             self.test_instance.
             add_pubkey_to_digitalocean_account,
-            self.test_pubkey_filename,
-            None,
-            ctx=ctx
+            pubkey_path,
+            "a name"
         )
 
-        self.assertIn("Error on server for ", oops.message)
-        self.assertIn(str(error_code), oops.message)
+        msg = oops.message
+        self.assertIn("Error on server for ", msg)
+        self.assertIn(str(error_code), msg)
 
     def test_make_key_name(self):
 
@@ -205,10 +208,6 @@ class TestSecurity(testtools.TestCase):
     @responses.activate
     def test_delete_pubkey_from_account_by_keyid_needs_204(self):
 
-        ctx = self.mock_ctx(
-            'test_delete_pubkey_from_account_by_keyid_needs_204'
-        )
-
         test_id = self.random_test_id()
         test_status = 200
 
@@ -222,9 +221,7 @@ class TestSecurity(testtools.TestCase):
             NonRecoverableError,
             self.test_instance.
             delete_pubkey_from_account_by_keyid,
-            test_id,
-            None,
-            ctx=ctx
+            test_id
         )
 
         self.assertIn("Error on server", oops.message)
@@ -257,10 +254,6 @@ class TestSecurity(testtools.TestCase):
     @responses.activate
     def test_delete_pubkey_from_account_by_fingerprint_needs_204(self):
 
-        ctx = self.mock_ctx(
-            'test_delete_pubkey_from_account_by_fingerprint_needs_204'
-        )
-
         error_code = 200
         test_fingerprint = self.random_fingerprint()
 
@@ -273,9 +266,7 @@ class TestSecurity(testtools.TestCase):
         oops = self.assertRaises(
             NonRecoverableError,
             self.test_instance.delete_pubkey_from_account_by_fingerprint,
-            test_fingerprint,
-            None,
-            ctx=ctx
+            test_fingerprint
         )
 
         self.assertIn("Error on server", oops.message)

@@ -43,7 +43,7 @@ class DigitalOceanSecurity(object):
         }
 
     def delete_pubkey_from_account_by_fingerprint(self, fingerprint, **_):
-        pass
+        raise NonRecoverableError("not implemented")
 
     def delete_pubkey_from_account_by_keyid(self, keyid, **_):
         """
@@ -51,7 +51,7 @@ class DigitalOceanSecurity(object):
         :param _: varargs
         :return: True always
         """
-        pass
+        raise NonRecoverableError("not implemented")
 
     def add_pubkey_to_digitalocean_account(self, pubkey_file, key_name, **_):
         """
@@ -79,22 +79,19 @@ class DigitalOceanSecurity(object):
         url = self.build_url('account/keys')
         h = self.common_headers()
 
-        try:
-            # because it's a POST, it should be only 1 response
-            # if we were to call GET, it would return all associated keys
-            response = requests.post(url, headers=h, data=payload)
-            code = response.status_code
-            if code < 200 or code > 299:
-                raise NonRecoverableError(
-                    "Error on server for %(URL)s. Status code = '%(CODE)d'."
-                    % {'URL': url, 'CODE': code}
-                )
-            r = response.json()['ssh_key']
+        # try:
+        # because it's a POST, it should be only 1 response
+        # if we were to call GET, it would return all associated keys
+        response = requests.post(url, headers=h, data=payload)
+        code = response.status_code
 
-        except (KeyError, ValueError):
+        if code < 200 or code > 299:
             raise NonRecoverableError(
-                "Error adding public ssh key to DigitalOcean account.")
+                "Error on server for %(URL)s. Status code = '%(CODE)d'."
+                % {'URL': url, 'CODE': code}
+            )
 
+        r = response.json()['ssh_key']
         return r['id'], r['fingerprint']
 
     def make_key_name(self, proposed_name):
