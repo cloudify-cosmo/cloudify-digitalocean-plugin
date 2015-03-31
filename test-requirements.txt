@@ -1,0 +1,5 @@
+cloudify-dsl-parser
+testtools
+testfixtures
+nose-cov
+responses

@@ -14,39 +14,42 @@
 # limitations under the License.
 
 
-import digitalocean as ocean
-
+# Cloudify Imports
 from cloudify.exceptions import NonRecoverableError
 
-from security import load_token
+# from security import _load_digitalocean_account_token
 
 
 def available_images():
     """ XXX
-    image specifiers are used to provision Droplets. Note: Not all images are available in all regions
+    image specifiers are used to provision Droplets. Note: Not all images are
+    available in all regions
     :return: a list of available image specifiers
     """
-    # TODO: Load from API: See https://developers.digitalocean.com/#list-all-images
+    # TODO: Load from API: See
+    # https://developers.digitalocean.com/#list-all-images
     return ['ubuntu-14-04-x64']
 
 
 def available_regions():
     """ XXX
-    region specifiers are used to provision Droplets in a particular data center ('region').
-    Note: Not all images or options are available on all regions.
+    region specifiers are used to provision Droplets in a particular data
+    center ('region'). Note: Not all images or options are available on all
+    regions.
     :return: a list of available region specifiers
     """
-    # TODO Load from API: See https://developers.digitalocean.com/#list-all-regions
+    # TODO Load from API: See
+    # https://developers.digitalocean.com/#list-all-regions
     regions = ['nyc3', 'nyc1', 'nyc2']
     return regions
 
 
 def available_slug_sizes():
     """ XXX
-    :param region: region specifier for which to return slug sizes
     :return: all available slug sizes
     """
-    # TODO Load from API: See https://developers.digitalocean.com/#list-all-regions
+    # TODO Load from API:
+    # See https://developers.digitalocean.com/#list-all-regions
     sizes = ['512mb']
     return sizes
 
@@ -62,69 +65,15 @@ def get_droplet(droplet_id):
 
     if droplet_id is None:
         raise NonRecoverableError("droplet_id is required.")
-    else:
-        droplets = filter(has_id, ocean.Manager(token=load_token()).get_all_droplets())
-        sz = len(droplets)
-        if sz > 1:
-            raise NonRecoverableError(droplet_does_not_exist_for_operation("get_droplet", droplet_id))
-        elif sz == 1:
-            return droplets[0]
-        else:
-            return None
+    raise NonRecoverableError("implement me")
 
 
 def droplet_does_not_exist_for_operation(op, droplet_id):
-    """ Creates an error message when Droplets are unexpectedly not found for some operation
+    """ Creates an error message when Droplets are unexpectedly not found for
+     some operation
     :param op: operation for which a Droplet does not exist
     :param droplet_id: id that we expected to find
     :return: a snotty message
     """
     return "Attempted to {0} a droplet with id '{1}', but no \
     such Droplet exists in the system.".format(op, droplet_id)
-
-# def save_key_pair(key_pair_object, ctx):
-#     """ZZZ copy-paste hasn't been cleaned up - included for repo cut-over only
-#     ZZZ actually broken ...
-#      Saves the key pair to the file specified in the blueprint. """
-#
-#     ctx.logger.debug('Attempting to save the key_pair_object.')
-#
-#     try:
-#         key_pair_object.save(ctx.node.properties['private_key_path'])
-#     except (boto.exception.BotoClientError, OSError) as e:
-#         raise NonRecoverableError('Unable to save key pair to file: {0}.'
-#                                   'OS Returned: {1}'.format(ctx.node.properties['private_key_path'], str(e)))
-#
-#     path = os.path.expanduser(ctx.node.properties['private_key_path'])
-#     key_path = os.path.join(path, '{0}{1}'.format(ctx.node.properties['resource_id'], '.pem'))
-#
-#     os.chmod(key_path, 0600)
-
-
-# def delete_key_pair(ctx):
-#     """ZZZ copy-paste hasn't been cleaned up - included for repo cut-over only
-#     Deletes the key pair in the file specified in the blueprint. """
-
-    # ctx.logger.debug('Attempting to save the key_pair_object.')
-
-    # path = os.path.expanduser(ctx.node.properties['private_key_path'])
-    # key_file = os.path.join(path, '{0}{1}'.format(ctx.node.properties['resource_id'], '.pem'))
-    # if os.path.exists(key_file):
-    #     try:
-    #         os.remove(key_file)
-    #     except OSError:
-    #         raise NonRecoverableError('Unable to save key pair to file: {0}.'
-    #                                   'OS Returned: {1}'.format(path,
-    #                                                             str(OSError)))
-
-
-# def search_for_key_file(ctx):
-#     """ZZZ copy-paste hasn't been cleaned up - included for repo cut-over only
-#     Indicates whether the file exists locally. """
-#
-#     path = os.path.expanduser(ctx.node.properties['private_key_path'])
-#     key_file = os.path.join(path, '{0}{1}'.format(ctx.node.properties['resource_id'], '.pem'))
-#     if os.path.exists(key_file):
-#         return True
-#     else:
-#         return False
