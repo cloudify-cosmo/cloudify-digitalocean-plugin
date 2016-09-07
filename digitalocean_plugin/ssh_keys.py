@@ -12,3 +12,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+import digitalocean
+
+from cloudify import ctx
+from cloudify.decorators import operation
+# from cloudify.exceptions import NonRecoverableError
+
+
+@operation
+def create(args=None, **_):
+    """Create an SSH key
+    """
+    ctx.logger.info('Creating SSH Key...')
+    ctx.logger.debug('SSH Key arguments: {0}'.format(args))
+    user_ssh_key = _get_ssh_key(args['key_source'])
+    key = digitalocean.SSHKey(
+        token=args['token'],
+        name=args['ssh_key_name'],
+        public_key=user_ssh_key,
+        **args)
+    key.create()
+
+
+def _get_ssh_key(source):
+    pass

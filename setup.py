@@ -13,28 +13,20 @@
 #    * See the License for the specific language governing permissions and
 #    * limitations under the License.
 
-
 from setuptools import setup
 
-# Replace the place holders with values for your project
-
 setup(
-
-    # Do not use underscores in the plugin name.
     name='cloudify-digitalocean-plugin',
-
     version='0.1',
     author='GigaSpaces',
     author_email='cosmo-admin@gigaspaces.com',
-    description='A cloudify plugin for managing Digital Ocean droplets.',
-
-    # This must correspond to the actual packages in the plugin.
+    description='A cloudify plugin for managing Digital Ocean droplets',
     packages=['digitalocean_plugin'],
     license='LICENSE',
     zip_safe=False,
     install_requires=[
-        "cloudify-plugins-common>=3.2a7",
-        "python-digitalocean==1.4.1",
-        "requests==2.5.3"
+        "requests==2.7.0",
+        "python-digitalocean==1.9.0",
+        "cloudify-plugins-common>=4.0a2",
     ]
 )

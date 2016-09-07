@@ -79,10 +79,3 @@ node_types:
         create: digitalocean_plugin.create
         start: digitalocean_plugin.start
         stop: digitalocean_plugin.stop
-
-    # TODO
-    cloudify.digitalocean.nodes.Snapshot:
-      derived_from: cloudify.nodes.Compute
-    # TODO
-    cloudify.digitalocean.nodes.Backup:
-      derived_from: cloudify.nodes.Compute
